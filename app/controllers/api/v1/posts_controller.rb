@@ -2,11 +2,13 @@ class Api::V1::PostsController < ApplicationController
   before_action :set_post, only: %i[show destroy]
 
   def index
+    # method to sort by upvotes?
     post = Post.all.order(created_at: :desc)
     render json: post
   end
 
   def create
+    # add user_id to post_params (either in frontend or here)
     post = Post.create!(post_params)
     if post
       render json: post
@@ -27,7 +29,8 @@ class Api::V1::PostsController < ApplicationController
   private
 
   def post_params
-    params.permit(:name, :image, :ingredients, :instruction)
+    # to clarify: need user_id or not?
+    params.permit(:title, :content, :user_id)
   end
 
   def set_post

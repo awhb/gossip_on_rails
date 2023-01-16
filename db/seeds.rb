@@ -10,4 +10,11 @@
     username: "adminbin#{i + 1}",
     password: "51354513"
   )
+
+  Post.create(
+    title: "Thread #{i + 1}",
+    content: "test test",
+    user_id: 1
+  )
 end
+

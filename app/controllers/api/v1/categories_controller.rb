@@ -3,7 +3,7 @@ class Api::V1::CategoriesController < ApplicationController
   before_action :set_post, only: %i[show create update destroy]
 
   def index
-    categories = Category.distinct.pluck(:name)
+    categories = Category.all
     render json: categories
   end
   

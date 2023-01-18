@@ -1,20 +1,12 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      get 'categories/index'
-      get 'categories/create'
-      get 'categories/show'
-      get 'categories/destroy'
-      get 'comments/index'
-      get 'comments/create'
-      get 'comments/destroy'
-      get 'posts/index'
-      post 'posts/create'
-      get '/post/:id', to: 'posts#show'
-      delete '/destroy_post/:id', to: 'recipes#destroy'
-      post 'users/create'
-      get '/user/:id', to: 'users#show'
-      delete '/destroy_user/:id', to: 'users#destroy'
+      post '/users/login', to: 'users#login'
+      resources :users, only: [:index, :show, :create]
+      resources :posts, only: [:index, :show, :create, :update, :destroy] do
+        resources :comments, only: [:index, :create, :update, :destroy]
+      end
+      resources :categories, only: [:index, :show, :create, :update, :destroy]
     end
   end
   root 'homepage#index'

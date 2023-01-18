@@ -1,23 +1,38 @@
 class Api::V1::CategoriesController < ApplicationController
-  before_action :set_category, only: %i[filter destroy]
+  before_action :authorize_request,  only: %i[create update destroy]
+  before_action :set_post_creator, only: %i[show update destroy]
 
   def index
     # method to sort by upvotes?
-    category = Category.all.order(created_at: :desc)
-    render json: category
+    categories = Category.distinct.pluck(:name)
+    render json: categories
   end
 
-  def create
-    # shift this logic to posts controller
-    category = Category.create!(category_params)
-    if category
-      render json: category
-    else
-      render json: category.errors
-    end
+  def show
+    categories = Category.where(post_id: params[:post_id])
+    render json: categories
   end
 
   def filter
+    # need to do
+    posts = Post.where(cat_id: params[:categories.id])
+
+  def create
+    if (@category && @post.user_id == @current_user)
+      something
+    end
+    # TODO: make hidden field for post_id in the create_comments form of frontend
+    comment = Comment.new(content: params[:content], post_id: params[:post_id], user_id: @current_user)
+
+    if comment.save
+    index()
+    else
+      render json: {errors: "Comment could not be saved. Please try again!"}, status: :unprocessable_entity
+    end
+  end
+
+
+  def update
     render json: @category
   end
 

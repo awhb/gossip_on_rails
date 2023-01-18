@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :authorize_request, except: :create
+  before_action :authorize_request, except: %i[index, create]
   before_action :set_user, only: %i[show]
 
   def index
@@ -7,20 +7,15 @@ class Api::V1::UsersController < ApplicationController
     render json: users
   end
 
-  def search
-    users = User.where("username = ?", params[:username])
-    render json: users
-  end
-
   def create
-    user = User.create!(user_params)
+    user = User.new(user_params)
     if user.save
       login()
     else
       render json: {error: 'An error has occurred.'}, status: :unprocessable_entity
     end
     rescue ActiveRecord::RecordNotUnique
-      render json: {error: 'The username is already taken.'}, status: :unprocessable_entity
+      render json: {error: 'This username is already taken.'}, status: :unprocessable_entity
     end
   end
 
@@ -34,7 +29,7 @@ class Api::V1::UsersController < ApplicationController
         token = JsonWebToken.encode(user_id: @user.id)
         render json: {token: token, username: user.username}
     else
-        render json: { error: 'Invalid username or password' }, status: :unauthorized
+        render json: { error: 'Invalid username or password.' }, status: :unauthorized
     end
   end
 

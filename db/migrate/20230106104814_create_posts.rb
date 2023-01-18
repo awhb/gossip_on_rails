@@ -4,7 +4,7 @@ class CreatePosts < ActiveRecord::Migration[7.0]
       t.string :title, null: false
       t.text :content, null: false
       t.integer :upvotes, default: 0
-      t.references :user, null: false, type: :bigint
+      t.references :user, null: false
 
       t.timestamps
     end

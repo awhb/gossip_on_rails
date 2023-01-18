@@ -18,7 +18,8 @@ class Api::V1::PostsController < ApplicationController
     if post.save
       categories = params[:categories]
       categories.each do |name|
-        newCat = Category.create(name: name, post_id:@post.id)
+        @category = Category.create(name: name)
+        post.categories<<(@category)
       render json: post
     else
       render json: {errors: "Post could not be saved. Please try again!"}, status: :unprocessable_entity
@@ -50,7 +51,7 @@ class Api::V1::PostsController < ApplicationController
   private
 
     def set_post_creator
-      @post = Post.find(params[:id])
+      @post = Post.find_by_id(params[:id])
       @post_json = @post.as_json
       @post_json['creator'] = post.user.username
     end

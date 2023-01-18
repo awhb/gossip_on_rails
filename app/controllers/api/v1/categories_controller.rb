@@ -1,54 +1,63 @@
 class Api::V1::CategoriesController < ApplicationController
   before_action :authorize_request,  only: %i[create update destroy]
-  before_action :set_post_creator, only: %i[show update destroy]
+  before_action :set_post, only: %i[show create update destroy]
 
   def index
-    # method to sort by upvotes?
     categories = Category.distinct.pluck(:name)
     render json: categories
   end
+  
+  def filter
+    @category = Category.find(params[:id])
+    posts = @category.posts
+    render json: posts
+  end
 
   def show
-    categories = Category.where(post_id: params[:post_id])
+    categories = @post.categories
     render json: categories
   end
 
-  def filter
-    # need to do
-    posts = Post.where(cat_id: params[:categories.id])
-
   def create
-    if (@category && @post.user_id == @current_user)
-      something
-    end
-    # TODO: make hidden field for post_id in the create_comments form of frontend
-    comment = Comment.new(content: params[:content], post_id: params[:post_id], user_id: @current_user)
+    if (@post.user_id == @current_user)
+      @category = Category.find_by(name: params[:name])
 
-    if comment.save
-    index()
-    else
-      render json: {errors: "Comment could not be saved. Please try again!"}, status: :unprocessable_entity
+      if (!@category)
+        @category = Category.create(name: params[:name])
+      end
+      @post.categories<<(@category)
+    else 
+      render json: {errors: "User token mismatch - try logging out and in again!"}
     end
   end
 
-
   def update
-    render json: @category
+    if (@post.user_id == @current_user)
+      @category = Category.find_by_id(params[:id])
+      if @comment.save
+        render json: {message: "Category successfully updated."}, status: 200
+      else
+          render error: {error: "Error in updating category. Please try again!"}, status: 400
+      end
+    else 
+      render json: {errors: "User token mismatch - try logging out and in again!"}
+    end
   end
 
   def destroy
-    @category&.destroy
-    render json: { message: 'Category deleted!' }
+    if (@post.user_id == @current_user)
+      @category = Category.find_by_id(params[:id])
+      @post.categories.delete(@category)
+      render json: { message: 'Category deleted!' }
+    else 
+      render json: {errors: "User token mismatch - try logging out and in again!"}
+    end
   end
 
   private
 
-  def category_params
-    # to clarify: need user_id or not?
-    params.permit(:name)
+  def set_post
+    @post = Post.find_by_id(params[:id])
   end
 
-  def set_category
-    @category = Category.find(params[:id])
-  end
 end

@@ -16,8 +16,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_07_173521) do
 
   create_table "categories", force: :cascade do |t|
     t.string "name", null: false
-    t.bigint "post_id", null: false
-    t.index ["post_id"], name: "index_categories_on_post_id"
+  end
+
+  create_table "categories_posts", id: false, force: :cascade do |t|
+    t.bigint "categories_id"
+    t.bigint "posts_id"
+    t.index ["categories_id"], name: "index_categories_posts_on_categories_id"
+    t.index ["posts_id"], name: "index_categories_posts_on_posts_id"
   end
 
   create_table "comments", force: :cascade do |t|

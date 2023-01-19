@@ -1,28 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const Posts = () => {
     const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
     useEffect(() => {
-        const url = "/api/v1/posts/index";
-        fetch(url)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((res) => setPosts(res))
-          .catch(() => navigate("/"));
-    }, []);
 
-    const allPosts = posts.map((post, index) => (
-        <div key={index} className="col-md-6 col-lg-4">
+        axios.get("/api/v1/posts/index")
+        .then(({ data }) => {
+            setPosts(data)
+        })
+    });
+
+    const allPosts = posts.map((post, id) => (
+        <div key={id} className="col-md-6 col-lg-4">
           <div className="card mb-4">
             <div className="card-body">
               <h5 className="card-title">{post.title}</h5>
-              <Link to={`/post/${post.id}`} className="btn custom-button">
+              <Link to={`/posts/${post.id}`} className="btn custom-button">
                 View Thread
               </Link>
             </div>
@@ -33,7 +29,7 @@ const Posts = () => {
       const noPost = (
         <div className="vw-100 vh-50 d-flex align-items-center justify-content-center">
           <h4>
-            No threads yet. Why not <Link to="/new_post">create one</Link>
+            No threads yet. Why not <Link to="/posts/new">create one</Link>
           </h4>
         </div>
       );
@@ -47,7 +43,7 @@ const Posts = () => {
           <div className="py-5">
             <main className="container">
               <div className="text-end mb-3">
-                <Link to="/post" className="btn custom-button">
+                <Link to="/posts/new" className="btn custom-button">
                   Create New Post
                 </Link>
               </div>

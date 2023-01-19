@@ -1,38 +1,44 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-const NewPost = () => {
-  const params = useParams();
+const NewRecipe = () => {
   const navigate = useNavigate();
-  const [post, setPost] = useState({ ingredients: "" });
+  const [name, setName] = useState("");
+  const [ingredients, setIngredients] = useState("");
+  const [instruction, setInstruction] = useState("");
 
-  useEffect(() => {
-    const url = `/api/v1/show/${params.id}`;
-    fetch(url)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((response) => setRecipe(response))
-      .catch(() => navigate("/recipes"));
-  }, [params.id]);
-
-  const addHtmlEntities = (str) => {
-    return String(str).replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+  const stripHtmlEntities = (str) => {
+    return String(str)
+      .replace(/\n/g, "<br> <br>")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   };
 
-  const deleteRecipe = () => {
-    const url = `/api/v1/destroy/${params.id}`;
-    const token = document.querySelector('meta[name="csrf-token"]').content;
+  const onChange = (event, setFunction) => {
+    setFunction(event.target.value);
+  };
 
+  const onSubmit = (event) => {
+    event.preventDefault();
+    const url = "/api/v1/recipes/create";
+
+    if (name.length == 0 || ingredients.length == 0 || instruction.length == 0)
+      return;
+
+    const body = {
+      name,
+      ingredients,
+      instruction: stripHtmlEntities(instruction),
+    };
+
+    const token = document.querySelector('meta[name="csrf-token"]').content;
     fetch(url, {
-      method: "DELETE",
+      method: "POST",
       headers: {
         "X-CSRF-Token": token,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(body),
     })
       .then((response) => {
         if (response.ok) {
@@ -40,70 +46,60 @@ const NewPost = () => {
         }
         throw new Error("Network response was not ok.");
       })
-      .then(() => navigate("/recipes"))
+      .then((response) => navigate(`/recipe/${response.id}`))
       .catch((error) => console.log(error.message));
   };
 
-  const ingredientList = () => {
-    let ingredientList = "No ingredients available";
-
-    if (recipe.ingredients.length > 0) {
-      ingredientList = recipe.ingredients
-        .split(",")
-        .map((ingredient, index) => (
-          <li key={index} className="list-group-item">
-            {ingredient}
-          </li>
-        ));
-    }
-
-    return ingredientList;
-  };
-
-  const recipeInstruction = addHtmlEntities(recipe.instruction);
-
   return (
-    <div className="">
-      <div className="hero position-relative d-flex align-items-center justify-content-center">
-        <img
-          src={recipe.image}
-          alt={`${recipe.name} image`}
-          className="img-fluid position-absolute"
-        />
-        <div className="overlay bg-dark position-absolute" />
-        <h1 className="display-4 position-relative text-white">
-          {recipe.name}
-        </h1>
-      </div>
-      <div className="container py-5">
-        <div className="row">
-          <div className="col-sm-12 col-lg-3">
-            <ul className="list-group">
-              <h5 className="mb-2">Ingredients</h5>
-              {ingredientList()}
-            </ul>
-          </div>
-          <div className="col-sm-12 col-lg-7">
-            <h5 className="mb-2">Preparation Instructions</h5>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: `${recipeInstruction}`,
-              }}
+    <div className="container mt-5">
+      <div className="row">
+        <div className="col-sm-12 col-lg-6 offset-lg-3">
+          <h1 className="font-weight-normal mb-5">
+            Add a new recipe to our awesome recipe collection.
+          </h1>
+          <form onSubmit={onSubmit}>
+            <div className="form-group">
+              <label htmlFor="recipeName">Recipe name</label>
+              <input
+                type="text"
+                name="name"
+                id="recipeName"
+                className="form-control"
+                required
+                onChange={(event) => onChange(event, setName)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="recipeIngredients">Ingredients</label>
+              <input
+                type="text"
+                name="ingredients"
+                id="recipeIngredients"
+                className="form-control"
+                required
+                onChange={(event) => onChange(event, setIngredients)}
+              />
+              <small id="ingredientsHelp" className="form-text text-muted">
+                Separate each ingredient with a comma.
+              </small>
+            </div>
+            <label htmlFor="instruction">Preparation Instructions</label>
+            <textarea
+              className="form-control"
+              id="instruction"
+              name="instruction"
+              rows="5"
+              required
+              onChange={(event) => onChange(event, setInstruction)}
             />
-          </div>
-          <div className="col-sm-12 col-lg-2">
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={deleteRecipe}
-            >
-              Delete Recipe
+            <button type="submit" className="btn custom-button mt-3">
+              Create Recipe
             </button>
-          </div>
+            <Link to="/recipes" className="btn btn-link mt-3">
+              Back to recipes
+            </Link>
+          </form>
         </div>
-        <Link to="/recipes" className="btn btn-link">
-          Back to recipes
-        </Link>
       </div>
     </div>
   );

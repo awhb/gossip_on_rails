@@ -49,8 +49,6 @@ class Api::V1::CommentsController < ApplicationController
 
     def set_comment_creator
       @comment = Comment.find_by_id(params[:id])
-      @comment_json = @comment.as_json
-      @comment_json['creator'] = comment.user.username
     end
 
 end

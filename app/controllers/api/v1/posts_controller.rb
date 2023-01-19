@@ -3,13 +3,13 @@ class Api::V1::PostsController < ApplicationController
   before_action :set_post_creator, only: %i[show update destroy]
 
   def index
-    # method to sort?
-    post = Post.all.order(created_at: :desc)
-    render json: post
+    # method to sort by upvotes?
+    posts = Post.all.order(created_at: :desc)
+    render json: posts
   end
 
   def show
-    render json: post_json
+    render json: @post_json, status: 200
   end
 
   def create
@@ -21,8 +21,8 @@ class Api::V1::PostsController < ApplicationController
         @category = Category.create(name: name)
         post.categories<<(@category)
       render json: post
-    else
-      render json: {errors: "Post could not be saved. Please try again!"}, status: :unprocessable_entity
+    # else
+    #   render json: {errors: "Post could not be saved. Please try again!"}, status: :unprocessable_entity
     end
   end
 
@@ -55,4 +55,5 @@ class Api::V1::PostsController < ApplicationController
       @post_json = @post.as_json
       @post_json['creator'] = post.user.username
     end
+  end
 end

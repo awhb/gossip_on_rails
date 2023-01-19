@@ -7,7 +7,7 @@ const Posts = () => {
     const [posts, setPosts] = useState([]);
     useEffect(() => {
 
-        axios.get("/api/v1/posts/index")
+        axios.get("/api/v1/posts")
         .then(({ data }) => {
             setPosts(data)
         })

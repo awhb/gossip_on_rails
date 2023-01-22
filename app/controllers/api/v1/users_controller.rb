@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :authenticate, except: %i[index, login, create]
-  before_action :set_user, only: %i[show, update, destroy]
+  before_action :authorize, except: %i[index login create]
+  before_action :set_user, only: %i[show update destroy]
 
   def create
     @user = User.create(user_params)
@@ -21,6 +21,7 @@ class Api::V1::UsersController < ApplicationController
     else
       render json: { error: 'Invalid username or password.' }, status: :unprocessable_entity
     end
+  end
 
   def index
     users = User.all.order(created_at: :desc)
@@ -50,4 +51,5 @@ class Api::V1::UsersController < ApplicationController
   def set_user
     @user = User.find(params[:id])
   end
+
 end

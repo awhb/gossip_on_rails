@@ -185,7 +185,7 @@ PLATFORMS
   x86_64-darwin-21
 
 DEPENDENCIES
-  bcrypt (~> 3.1)
+  bcrypt (~> 3.1.7)
   bootsnap
   cssbundling-rails
   debug

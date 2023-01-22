@@ -26,8 +26,9 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize 
-    render json: { error: 'Not logged in.' } status: :unauthorized unless
-    authorized_user
-    
+    if !authorized_user 
+      render json: { error: 'Not logged in.' }, status: :unauthorized
+    end
   end
 end
+

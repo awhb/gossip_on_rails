@@ -1,5 +1,5 @@
 class Api::V1::PostsController < ApplicationController
-  before_action :authenticate,  only: %i[create update destroy]
+  before_action :authorize,  only: %i[create update destroy]
   before_action :set_post_creator, only: %i[show update destroy]
 
   def index
@@ -55,5 +55,7 @@ class Api::V1::PostsController < ApplicationController
       @post_json = @post.as_json
       @post_json['creator'] = post.user.username
     end
+
+    
   end
 end

@@ -1,5 +1,5 @@
 class Api::V1::CategoriesController < ApplicationController
-  before_action :authenticate,  only: %i[create update destroy]
+  before_action :authorize,  only: %i[create update destroy]
   before_action :set_post, only: %i[show create update destroy]
 
   def index

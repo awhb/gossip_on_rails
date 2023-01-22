@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      post 'users/login', to: 'users#login'
+      post 'login', to: 'users#login'
       get 'categories/index', to: 'categories#index'
       get '/categories/:id', to: 'categories#filter'
       resources :users, only: [:index, :show, :create, :update, :destroy]

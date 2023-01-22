@@ -2,19 +2,30 @@ class Api::V1::UsersController < ApplicationController
   before_action :authenticate, except: %i[index, login, create]
   before_action :set_user, only: %i[show, update, destroy]
 
+  def create
+    @user = User.create(user_params)
+    if @user.valid?
+      token = encode_token({ user_id: @user.id })
+      render json: { user: @user, token: token }, status: :ok
+    else
+      render json: { error: 'Username already taken.' }, status: :unprocessable_entity
+    end
+  end
+
+  def login 
+    @user = User.find_by(username: user_params[:username])
+
+    if @user && @user.authenticate(user_params[:password])
+      token = encode_token({ user_id: @user.id })
+      render json: { user: @user, token: token }, status: :ok
+    else
+      render json: { error: 'Invalid username or password.' }, status: :unprocessable_entity
+    end
+
   def index
     users = User.all.order(created_at: :desc)
     render json: users
   end
-
-  def create
-    @user = User.new(user_params)
-    if @user.save
-      render json: {token: user.login}
-    else
-      render json: { error: @user.errors.full_messages }, status: :unprocessable_entity
-    end
-  end 
 
   def show
     render json: @user
@@ -30,20 +41,10 @@ class Api::V1::UsersController < ApplicationController
     @user.destroy
   end
 
-  def login
-    user = User.find_by(name: params[:username])
-    if user&.valid_password?(params[:password])
-        token = JWT.encode({ user_id: user.id }, Rails.application.secrets.secret_key_base)
-        render json: {token: token, username: user.username}
-    else
-        render json: { error: 'Invalid username or password.' }, status: :unauthorized
-    end
-  end
-
   private
 
   def user_params
-    params.require(user).permit(:username, :password)
+    params.require(:user).permit(:username, :password)
   end
 
   def set_user

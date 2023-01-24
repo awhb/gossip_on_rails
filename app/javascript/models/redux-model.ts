@@ -14,6 +14,11 @@ export interface PostModel {
   upvotes: number;
 }
 
+export interface PostArrayModel {
+  all_posts: PostModel[];
+  particular_post: PostModel;
+}
+
 export interface CommentModel {
   id: number;
   content: string;
@@ -27,4 +32,9 @@ export interface CommentModel {
 export interface CategoryModel {
   id: number;
   name: string;
+}
+
+export interface CategoryArrayModel {
+  all_categories: CategoryModel[];
+  selected_categories: CategoryModel[];
 }

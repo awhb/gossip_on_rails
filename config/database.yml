@@ -21,7 +21,7 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: adminbin
-  password: <%= ENV['GOSSIP_DATABASE_PASSWORD'] %>
+  password: HuT23456
 development:
   <<: *default
   database: gossip_on_rails_development

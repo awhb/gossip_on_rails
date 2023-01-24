@@ -14,6 +14,7 @@ document.addEventListener("turbo:load", () => {
       <Provider store={store}>
         <App />
       </Provider>
-    </React.StrictMode>
+    </React.StrictMode>,
+    
 );
 });

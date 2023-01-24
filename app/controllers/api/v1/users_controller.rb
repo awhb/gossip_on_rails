@@ -33,13 +33,16 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update 
-    unless @user.update(user_params)
-      render json: {error: @user.errors.full_messages}, status: 503
+    if @user.update(user_params)
+      render json: @user
+    else
+      render json: {error: "Could not update. Please try again later."}, status: 400
     end
   end
 
   def destroy
     @user.destroy
+    index()
   end
 
   private

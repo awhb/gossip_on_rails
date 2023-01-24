@@ -13,13 +13,13 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def create
-    # TODO: make hidden field for post_id in the create_comments form of frontend
+
     comment = Comment.new(content: params[:content], post_id: params[:post_id], user_id: @current_user)
 
     if comment.save
-    index()
+      index()
     else
-      render json: {errors: "Comment could not be saved. Please try again!"}, status: :unprocessable_entity
+      render json: {error: "Comment could not be saved. Please try again!"}, status: 400
     end
   end
 
@@ -27,21 +27,21 @@ class Api::V1::CommentsController < ApplicationController
     if (@comment && @comment.user_id == @current_user)
       @comment.assign_attributes(content: params[:content])
       if @comment.save
-        render json: {message: "Comment successfully updated."}, status: 200
+        index()
       else
-          render error: {error: "Error in updating comment. Please try again!"}, status: 400
+          render json: {error: "Error in updating comment. Please try again!"}, status: 400
       end
     else 
-      render json: {errors: "User token mismatch - try logging out and in again!"}
+      render json: {error: "User token mismatch - try logging out and in again!"}
     end 
   end
 
   def destroy
     if (@comment && @comment.user_id == @current_user)
       @comment&.destroy
-      render json: { message: 'Comment deleted!' }
+      index()
     else 
-      render json: {errors: "User token mismatch - try logging out and in again!"}
+      render json: {error: "User token mismatch - try logging out and in again!"}
     end
   end
 

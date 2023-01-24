@@ -23,11 +23,15 @@ class Api::V1::PostsController < ApplicationController
     if post.save
       categories = params[:categories]
       categories.each do |name|
-        @category = Category.create(name: name)
+        @category = Category.find_by(name: name)
+        if (!@category)
+          @category = Category.create(name: name)
+        end
         post.categories<<(@category)
+      end
       render json: post
-    # else
-    #   render json: {errors: "Post could not be saved. Please try again!"}, status: :unprocessable_entity
+    else
+      render json: {error: "Post could not be saved. Please try again!"}, status: 400
     end
   end
 
@@ -35,32 +39,29 @@ class Api::V1::PostsController < ApplicationController
     if (@post && @post.user_id == @current_user)
       @post.assign_attributes(title: params[:title], content: params[:content])
       if @post.save
-        render json: {message: "Thread successfully updated."}, status: 200
+        render json: @post, status: 200
       else
-          render error: {error: "Error in updating thread. Please try again!"}, status: 400
+          render json: {error: "Error in updating thread. Please try again!"}, status: 400
       end
     else 
-      render json: {errors: "User token mismatch - try logging out and in again!"}
+      render json: {error: "User token mismatch - try logging out and in again!"}, status: 400
     end 
   end
 
   def destroy
     if (@post && @post.user_id == @current_user)
       @post&.destroy
-      render json: { message: 'Thread deleted!' }
+      index()
     else 
-      render json: {errors: "User token mismatch - try logging out and in again!"}
+      render json: {error: "User token mismatch - try logging out and in again!"}, status: 400
     end
   end
 
   private
 
-    def set_post_creator
-      @post = Post.find_by_id(params[:id])
-      @post_json = @post.as_json
-      @post_json['creator'] = post.user.username
-    end
-
-    
+  def set_post_creator
+    @post = Post.find_by_id(params[:id])
+    @post_json = @post.as_json
+    @post_json['creator'] = post.user.username
   end
 end

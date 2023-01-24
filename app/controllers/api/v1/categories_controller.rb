@@ -21,13 +21,14 @@ class Api::V1::CategoriesController < ApplicationController
   def create
     if (@post.user_id == @current_user)
       @category = Category.find_by(name: params[:name])
-
       if (!@category)
         @category = Category.create(name: params[:name])
       end
+
       @post.categories<<(@category)
+      show()
     else 
-      render json: {errors: "User token mismatch - try logging out and in again!"}
+      render json: {error: "User token mismatch - try logging out and in again!"}
     end
   end
 
@@ -35,12 +36,12 @@ class Api::V1::CategoriesController < ApplicationController
     if (@post.user_id == @current_user)
       @category = Category.find_by_id(params[:id])
       if @comment.save
-        render json: {message: "Category successfully updated."}, status: 200
+        show()
       else
-          render error: {error: "Error in updating category. Please try again!"}, status: 400
+          render json: {error: "Error in updating category. Please try again!"}, status: 400
       end
-    else 
-      render json: {errors: "User token mismatch - try logging out and in again!"}
+    else
+      render json: {error: "User token mismatch - try logging out and in again!"}, status: :unprocessable_entity
     end
   end
 
@@ -48,9 +49,9 @@ class Api::V1::CategoriesController < ApplicationController
     if (@post.user_id == @current_user)
       @category = Category.find_by_id(params[:id])
       @post.categories.delete(@category)
-      render json: { message: 'Category deleted!' }
+      show()
     else 
-      render json: {errors: "User token mismatch - try logging out and in again!"}
+      render json: {error: "User token mismatch - try logging out and in again!"}
     end
   end
 

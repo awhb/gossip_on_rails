@@ -4,8 +4,13 @@ class Api::V1::PostsController < ApplicationController
 
   def index
     # method to sort by upvotes?
-    posts = Post.all.order(created_at: :desc)
-    render json: posts
+    posts = Post.all
+    amended_posts = posts.map do |post|
+      post_json = post.as_json
+      post_json['creator'] = post.user.username
+      post_json
+    end
+    render json: amended_posts, status: 200
   end
 
   def show

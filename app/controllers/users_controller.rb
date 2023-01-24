@@ -1,4 +1,4 @@
-class Api::V1::UsersController < ApplicationController
+class UsersController < ApplicationController
   before_action :authorize, only: %i[update]
   before_action :set_user, only: %i[show update destroy]
 
@@ -41,7 +41,7 @@ class Api::V1::UsersController < ApplicationController
       token = encode_token({ user_id: @user.id })
       render json: { user: @user, token: token }, status: :ok
     else
-      render json: { error: 'Invalid username or password.' }, status: :unprocessable_entity
+      render json: { error: 'Invalid username or password.' }, status: 400
     end
   end
 

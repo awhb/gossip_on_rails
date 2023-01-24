@@ -1,4 +1,4 @@
-class Api::V1::PostsController < ApplicationController
+class PostsController < ApplicationController
   before_action :authorize,  only: %i[create update destroy]
   before_action :set_post_creator, only: %i[show update destroy]
 

@@ -25,6 +25,12 @@ module GossipOnRails
 
     # Configuration for the application, engines, and railties goes here.
     #
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => [:get, :post, :put, :delete]
+      end
+    end
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #

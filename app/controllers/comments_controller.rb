@@ -1,4 +1,4 @@
-class Api::V1::CommentsController < ApplicationController
+class CommentsController < ApplicationController
   before_action :authorize,  only: %i[create update destroy]
   before_action :set_comment_creator, only: %i[update destroy]
 

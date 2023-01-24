@@ -1,7 +1,7 @@
 import { PostModel } from "../models/redux-model";
 import axios from "axios";
 
-export default{
+export default {
   async getAllPosts() {
     var response = await axios.get("/posts");
     return response.data;

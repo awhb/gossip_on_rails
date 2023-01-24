@@ -8,7 +8,7 @@
 2.times do |i|
   User.create(
     username: "adminbin#{i + 1}",
-    password: "51354513"
+    password: "1234"
   )
 
   Post.create(

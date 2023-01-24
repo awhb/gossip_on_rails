@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :authorize, except: %i[index login create]
+  before_action :authorize, only: %i[update]
   before_action :set_user, only: %i[show update destroy]
 
   def create

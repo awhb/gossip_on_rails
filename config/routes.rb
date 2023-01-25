@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   resources :users, only: [:index, :show, :create, :update, :destroy]
   resources :posts, only: [:index, :show, :create, :update, :destroy] do
     resources :comments, only: [:index, :create, :update, :destroy]
-    resources :categories, only: [:show, :create, :update, :destroy]
   end
 
   root 'homepage#index'

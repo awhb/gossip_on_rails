@@ -14,7 +14,8 @@
   Post.create(
     title: "Thread #{i + 1}",
     content: "test test",
-    user_id: 1
+    user_id: 1,
+    categories: ["test", "test2"]
   )
 end
 

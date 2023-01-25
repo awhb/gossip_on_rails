@@ -10,20 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_07_173521) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_07_132815) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "categories", force: :cascade do |t|
-    t.string "name", null: false
-  end
-
-  create_table "categories_posts", id: false, force: :cascade do |t|
-    t.bigint "categories_id"
-    t.bigint "posts_id"
-    t.index ["categories_id"], name: "index_categories_posts_on_categories_id"
-    t.index ["posts_id"], name: "index_categories_posts_on_posts_id"
-  end
 
   create_table "comments", force: :cascade do |t|
     t.text "content", null: false
@@ -39,6 +28,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_07_173521) do
     t.string "title", null: false
     t.text "content", null: false
     t.integer "upvotes", default: 0
+    t.text "categories", default: [], array: true
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

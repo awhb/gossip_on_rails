@@ -3,7 +3,6 @@ class PostsController < ApplicationController
   before_action :set_post_creator, only: %i[show update destroy]
 
   def index
-    # method to sort by upvotes?
     posts = Post.all
     amended_posts = posts.map do |post|
       post_json = post.as_json
@@ -18,26 +17,19 @@ class PostsController < ApplicationController
   end
 
   def create
-    post = Post.new(title: params[:title], content: params[:content], user_id: @current_user)
+    post = Post.new(post_params)
 
     if post.save
-      categories = params[:categories]
-      categories.each do |name|
-        @category = Category.find_by(name: name)
-        if (!@category)
-          @category = Category.create(name: name)
-        end
-        post.categories<<(@category)
-      end
       render json: post
     else
       render json: {error: "Post could not be saved. Please try again!"}, status: 400
     end
+
   end
 
   def update
     if (@post && @post.user_id == @current_user)
-      @post.assign_attributes(title: params[:title], content: params[:content])
+      @post.assign_attributes(post_params)
       if @post.save
         render json: @post, status: 200
       else
@@ -58,6 +50,10 @@ class PostsController < ApplicationController
   end
 
   private
+
+  def post_params
+    params.require(:post).permit(:id, :title, :content, :categories, :user_id)
+  end
 
   def set_post_creator
     @post = Post.find_by_id(params[:id])

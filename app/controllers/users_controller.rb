@@ -25,7 +25,7 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       render json: @user
     else
-      render json: {error: "Could not update. Please try again later."}, status: 400
+      render json: {error: "Username already taken."}, status: 400
     end
   end
 
@@ -48,7 +48,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:username, :password)
+    params.require(:user).permit(:user_id, :username, :password)
   end
 
   def set_user

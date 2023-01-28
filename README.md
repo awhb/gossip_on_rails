@@ -2,6 +2,8 @@
 
 This README would normally document whatever steps are necessary to get the
 application up and running.
+Name: Aw Hang Bin
+Matriculation Number: A0252492A
 
 Things you may want to cover:
 

@@ -9,7 +9,7 @@ class CommentsController < ApplicationController
       comment_json['creator'] = comment.user.username
       comment_json
     end
-    render json: amended_comments
+    render json: comments, status: 200
   end
 
   def create

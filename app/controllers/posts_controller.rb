@@ -58,6 +58,6 @@ class PostsController < ApplicationController
   def set_post_creator
     @post = Post.find_by_id(params[:id])
     @post_json = @post.as_json
-    @post_json['creator'] = post.user.username
+    @post_json['creator'] = @post.user.username
   end
 end
